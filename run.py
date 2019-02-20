@@ -1,6 +1,6 @@
-from app_ussd import create_app
+from app import create_app
 
-app  = create_app()
+ussd_app  = create_app()
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    ussd_app.run(debug=True)

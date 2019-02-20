@@ -5,7 +5,7 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ./app/:/home/app/
+      - ./:/home/app/
     depends_on:
       - db
   db:
