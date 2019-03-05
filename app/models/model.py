@@ -3,10 +3,6 @@ from app import db
 
 class User(db.Model):
     __tablename__ = "user_info"
-<<<<<<< HEAD
-
-=======
->>>>>>> 8eda637f5be305458c7605d20012f5049a5d585e
     id = db.Column('user_id', db.Integer, primary_key=True)
     username = db.Column(db.String(100))
     email = db.Column(db.String(50))
@@ -14,7 +10,6 @@ class User(db.Model):
     def __init__(self, username, email):
         self.username = username
         self.email = email
-<<<<<<< HEAD
 
 class IncomingText(db.Model):
     __tablename__ = "incoming_text"
@@ -30,5 +25,3 @@ class IncomingText(db.Model):
         self.session_id = session_id
         self.phonenumber = phonenumber
         self.servicecode = servicecode
-=======
->>>>>>> 8eda637f5be305458c7605d20012f5049a5d585e
