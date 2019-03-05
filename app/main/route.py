@@ -6,7 +6,7 @@ from array import *
 main = Blueprint('main', __name__)
 
 
-@main.route('/main', methods=['GET', 'POST'])
+@main.route('/', methods=['GET', 'POST'])
 def index():
 
     data = request.get_json()
@@ -27,8 +27,6 @@ def index():
     return jsonify({"username": name_user.username, "email": name_user.email})
 
     # return "hello world"
-
-
 
 userinfo = ["text", "session", "phone", "ussdcode"]
 
