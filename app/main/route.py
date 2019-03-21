@@ -1,4 +1,5 @@
-from flask import Flask, render_template, flash, redirect, request, url_for, jsonify,  Blueprint
+from flask import Flask, render_template, flash, redirect, request, url_for, jsonify, Blueprint
+import json
 from app.models.model import User, IncomingText
 from app import db
 from array import *
@@ -35,11 +36,38 @@ def home():
     # import pdb 
     # pdb.set_trace()
 
-    sessioni = request.args.get("SessionID")
+
+    ''' 
+    #==============================###### Africa's talking retrieving data #####=============================================#
+  
+    data = request.form
+
+    #data = request.json["sessionId"]
+    #print(data, "***********###")
+    
+    sessioni = data["sessionId"]
+    phoneNumber = data["phoneNumber"]
+    serviceCode = data["serviceCode"]
+    text = data["text"]
+    networkCode = data["networkCode"]
+   
+    print(sessioni, phoneNumber, serviceCode, text, networkCode)
+
+    sessioni = request.args.get("sessionId")
+    phoneNumber = request.args.get("phoneNumber")
+    serviceCode = request.args.get('serviceCode')
+    text = request.args.get('text') 
+    solar = request.args.get('networkCode')
+
+    #==============================###### END  Africa's talking retrieving data #####=============================================#
+    '''
+
+    sessioni = request.args.get("session")
     phoneNumber = request.args.get("msisdn")
     serviceCode = request.args.get('welcome')
     text = request.args.get('input') 
     solar = request.args.get('solars')
+    
 
     #------------ Converting incoming arguments into text from encoders ------
     text = str(text)
@@ -48,72 +76,89 @@ def home():
     sessioni = str(sessioni)
     serviceCode = "780*1*1" 
    
-    world()
-     
-    #return "Hello world"
- 
+    
     print("------------out------------------")
     print(sessioni)
     print(phoneNumber)
     print(serviceCode)
     print(text)
     print( "-------------------Hello----------------")
- 
+
+
+    if phoneNumber != '250783435793':
+        return 'MeshPower USSD service under development, coming soon!'
+
+    # If the incoming payload lacks one of the below arguments, Talk to havanao to fix incoming parameters on their end
+    if sessioni is None or phoneNumber is None or text is None or serviceCode is None:
+        #print(sessioni, phoneNumber, text, serviceCode)
+        return "Meshpower USSD service under renovation, try again later"
+
+    #Defining the variable that will return data from database 
     user_data = IncomingText.query.all()
     size = len(user_data)
-    print("Size is ", size)
    
     userInfo = ""
-
+    
+    #Iniitialize the database if there is none
     if size == 0: 
         init_db()   
-    
+
+    #If the database size is one we can operate otherwise, there is an issue that should be fixed
     if size == 1:
         if "780*1*1" in text:
             text = "1" 
 
+        # Querying the initial data
         session_data = user_data[0].session_id
         phone_data = user_data[0].phonenumber
         code_data = user_data[0].servicecode
         input_data = user_data[0].inputuser
      
+        #If the data from db is dummy, initialize it
         if input_data == "dummy":
             user_data[0].inputuser = "1*" 
+        #Otherwise we will concatenate the input with *
         else:
             user_data[0].inputuser =  input_data + text + "*"
-        
+   
+        # Populating the db with incoming variables        
         user_data[0].session_id = sessioni
         user_data[0].phonenumber = phoneNumber
         user_data[0].servicecode = serviceCode 
    
-        
+        #If the session is different, that means we need to reinitialize data in the db
         if session_data != sessioni and size == 1: 
             user_data[0].inputuser = "1*"
             user_data[0].phonenumber = phoneNumber
             user_data[0].session_id = sessioni
-
-
+   
+        #Populating variable with data from db
         session_data = user_data[0].session_id
         phone_data = user_data[0].phonenumber
         code_data = user_data[0].servicecode
         input_data = user_data[0].inputuser
 
-
-       
-        print("Size is ==> ", input_data)
-
+        
+#--------------------------------------- USSD Business logic -----------------------------------------
+        # Welcome message in English
         if input_data == "1*":
             userInfo = "CON Welcome to MeshPower\nPlease choose:\n1. Kinyarwanda\n2. English"
+
+        # Welcome message in Kinyarwanda
         elif input_data == "1*1*":
             userInfo = "CON Kanda\n1. Amafranga asigaye\n2. Uko konti yakoreshejwe\n3. Kwishyura umuriro\n00. Subira ahatangira"
+
+        # The english menu
         elif input_data == "1*2*":
             userInfo = "CON Press\n1. Account number\n2. Check Balance\n3. Payment\n4. Account history\n5. Review the service\n\
 6. Apply for service\n7. Report issues\n00. Back Home"       
+    
+        # Account functionality
         elif "1*2*1*" in input_data:
             userInfo = findAccountNumber(input_data)
             
-        elif input_data == "1*2*2*":
-            print("Reached")
+        # The balance functionality
+        elif "1*2*2*" in input_data:
             userInfo = findBalance(input_data)
 
         elif input_data == "1*2*3*":
@@ -144,5 +189,4 @@ def home():
 def init_db():
     userinfo = IncomingText("dummy", "dummy", "dummy", "dummy")
     db.session.add(userinfo)
-    db.session.commit()
-      
+    db.session.commit() 

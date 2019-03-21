@@ -21,11 +21,13 @@ def create_app():
 
     print()
 
-    # -----------------------
+    # --------------Importing main which will help us routing ---------
 
     from app.main.route import main
 
     print("----------------------------------: ")
+ 
+    # Registering the route
     app.register_blueprint(main)
 
     return app
