@@ -3,11 +3,7 @@ services:
   web:
     build: .
     ports:
-<<<<<<< HEAD
       - "6200:5000"
-=======
-      - "5000:5000"
->>>>>>> 8eda637f5be305458c7605d20012f5049a5d585e
     volumes:
       - ./:/home/app/
     depends_on:
