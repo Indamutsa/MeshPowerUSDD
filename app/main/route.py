@@ -52,7 +52,7 @@ def home():
      
     #return "Hello world"
  
-    print("------------out------------------")
+    print("------------out----------------")
     print(sessioni)
     print(phoneNumber)
     print(serviceCode)
