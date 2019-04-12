@@ -34,14 +34,13 @@ def findBalance(userinput):
 		#If response is defined
 		if r.status_code != 200:
 			return "Account number not found"
-
-       
+ 
+		data = r.json()
 		 
 		for key, value in data.items():
 			if value == "No such account" or value == "ERROR":
 				return "Account number not found"
 
-		data = r.json()
 
 		# Checking if the incoming account is equal to the data from the database
 		if len(data) > 2 and matches[0] == data['account']:
