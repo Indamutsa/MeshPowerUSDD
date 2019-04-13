@@ -22,7 +22,7 @@ def index():
 	# Defining our session
     Session = sessionmaker(bind=engine)
     session = Session()
-
+sjdgjsag
     # Retrieving data from the request object as JSON
     data = request.get_json()
     #username = data["username"]
