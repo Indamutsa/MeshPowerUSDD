@@ -4,7 +4,7 @@ import json
 from app.models.model import IncomingText, engine #, User
 #from app import db
 from array import *
-from app.balance.hello import world
+from app.utils.ussd_util import create_user_space
 from app.account_statement.account_number import findAccountNumber 
 from app.account_statement.balance import findBalance
 from sqlalchemy.orm import sessionmaker
@@ -249,7 +249,7 @@ def home():
     '''
     return "CON Hello world"
 
-
+'''
 # Since havanao didn't have USSD backbone such as keeping the session in place, concatening the user input
 # and so much, we set up this function to take care of user session, concatening the user input and keep track
 # of the user where he/she might be down ussd tree
@@ -317,4 +317,4 @@ def create_user_space(inputuser, phonenumber, sessioni, serviceCode):
         session.commit()
 
 
-    
+''' 

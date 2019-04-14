@@ -26,7 +26,7 @@ def create_app():
 
     # --------------Importing main which will help us routing ---------
 
-    from app.main.route import main
+    from app.controllers.mainController import main
 
     print("----------------------------------: ")
  
