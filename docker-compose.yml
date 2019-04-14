@@ -5,7 +5,7 @@ services:
     ports:
       - "6200:5000"
     volumes:
-      - ./:/home/arsene/USSD/app
+      - ./:/home/app/
     depends_on:
       - db
   db:

@@ -3,8 +3,9 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 
-#Define our engine that will help us connect to the database
-engine = create_engine('postgresql://ussd:123456@db:5432/ussd_db', echo=True)
+# Define our engine that will help us connect to the database || You can add echo=True
+# within create engine to echo any query make to the database (engine = create_engine('postgresql://ussd:123456@db:5432/ussd_db, echo=True')
+engine = create_engine('postgresql://ussd:123456@db:5432/ussd_db')
 
 #Defining a base class stores a catlog of classes and mapped tables
 Base = declarative_base()
