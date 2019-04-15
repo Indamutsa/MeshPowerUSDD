@@ -19,7 +19,7 @@ def create_user_space(inputuser, phonenumber, sessioni, serviceCode):
 
     #-----------------------------------------------------------------------------------------------------------------
     # If the user is not in the database, we make sure we add the user according to his phone number
-    if result.count() == 0 and  "780*1*1" in inputuser:
+    if result.count() == 0:
 
         # We want to make sure that when the number does not exist that we catch the exception
         try:
@@ -66,4 +66,34 @@ def create_user_space(inputuser, phonenumber, sessioni, serviceCode):
         session.query(IncomingText).filter(IncomingText.phonenumber == phonenumber)\
             .update({ IncomingText.inputuser: inputuser_db }, synchronize_session = False)
         session.commit()
+
+
+    #---------------------------------- Going back once -------------------------------------------------------------
+
+    # If the session is the same as we have in the db, we would to go back once until we hit the root
+    elif session_db == sessioni and inputuser == 0:
+
+        # We would like to make sure whehn he reaches the root, he stops
+        if len(inputuser_db) > 2:
+            inputuser_db = inputuser_db[:-2]
+        else:
+            inputuser_db = "1*"
+
+        # Update it to the database and commit it
+        session.query(IncomingText).filter(IncomingText.phonenumber == phonenumber)\
+            .update({ IncomingText.inputuser: inputuser_db }, synchronize_session = False)
+        session.commit()
+
+    #---------------------------------- Going back HOME (on the root of the tree ) ----------------------------------
+
+    # If the session is the same as we have in the db, the user can go on and continue down the tree
+    elif session_db == sessioni and inputuser == 00 :
+        inputuser_db = "1*"
+
+        # Update it to the database and commit it
+        session.query(IncomingText).filter(IncomingText.phonenumber == phonenumber)\
+            .update({ IncomingText.inputuser: inputuser_db }, synchronize_session = False)
+        session.commit()
+
+    #----------------------------------------------------------------------------------------------------------------
 

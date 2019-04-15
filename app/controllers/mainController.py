@@ -110,9 +110,9 @@ def home():
     print("Text ===>: ",text)
     print( "-------------------Hello----------------")
 
-    if phoneNumber != '250783435793' and  phoneNumber != '250786485163' and phoneNumber != '250782019621' and phoneNumber != '250784605151'\
-        and phoneNumber != '250788420398':   
-        return 'MeshPower USSD service under development, coming soon!'
+    #if phoneNumber != '250783435793' and  phoneNumber != '250786485163' and phoneNumber != '250782019621' and phoneNumber != '250784605151'\
+    #    and phoneNumber != '250788420398':   
+    return 'MeshPower USSD service under development, coming soon!'
 
     # If the incoming payload lacks one of the below arguments, Talk to havanao to fix incoming parameters on their end
     if sessioni is None or phoneNumber is None or text is None:
