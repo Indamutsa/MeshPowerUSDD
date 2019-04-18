@@ -3,7 +3,7 @@ services:
   web:
     build: .
     ports:
-      - "5000:5000"
+      - "6200:5000"
     volumes:
       - ./:/home/app/
     depends_on:
@@ -13,3 +13,12 @@ services:
     env_file: .env
     expose:
       - 5432
+  nginx:
+    restart: always
+    build: ./nginx
+    ports:
+      - "888:888"
+    volumes:
+      - /www/static
+    depends_on:
+      - web

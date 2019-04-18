@@ -1,26 +1,30 @@
 import time
 from flask import Flask, render_template, flash, redirect, request, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
+<<<<<<< HEAD
 
 DBUSER = 'ussd'
 DBPASS = '123456'
 DBHOST = 'db'
 DBPORT = '5432'
 DBNAME = 'ussd_db'
+=======
+from MeshPower.app.config import AppConfig
+>>>>>>> master
 
 
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = \
     'postgresql+psycopg2://{user}:{passwd}@{host}:{port}/{db}'.format(
-        user=DBUSER,
-        passwd=DBPASS,
-        host=DBHOST,
-        port=DBPORT,
-        db=DBNAME)
+        user= AppConfig.DBUSER,
+        passwd=AppConfig.DBPASS,
+        host=AppConfig.DBHOST,
+        port=AppConfig.DBPORT,
+        db=AppConfig.DBNAME)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.secret_key = '123456'
+app.secret_key = AppConfig.SECRET_KEY
 
 #This fb contains app instance, when it is invoked it has all app context with it regarding the db
 db = SQLAlchemy(app)
