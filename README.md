@@ -3,7 +3,7 @@ This is our MeshPower USSD development code
 You can dial *780*1*1# 
 And then follow instructions
 
-# How to start appilcation
+## How to start the appilcation
 * Ensure to convert run.py to unix formart using command:
         **dos2unix run.py**
 * Then  make run.py executable by running the command:
