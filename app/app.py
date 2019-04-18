@@ -1,7 +1,16 @@
 import time
 from flask import Flask, render_template, flash, redirect, request, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
+<<<<<<< HEAD
+
+DBUSER = 'ussd'
+DBPASS = '123456'
+DBHOST = 'db'
+DBPORT = '5432'
+DBNAME = 'ussd_db'
+=======
 from MeshPower.app.config import AppConfig
+>>>>>>> master
 
 
 app = Flask(__name__)
@@ -42,6 +51,95 @@ class User(db.Model):
         self.email = email
 
 
+class Customer(db.Model):
+   # __tablename__ = "customers"
+    id = db.Column('customer_id', db.Integer, primary_key=True)
+    fullname = db.Column(db.String(100))
+    account_no = db.Column(db.String(20))
+    phone_no = db.Column(db.String(20))
+    site = db.Column(db.String(100))
+    balance = db.Column(db.Integer)
+    tarrif = db.Column(db.String(50))
+
+    def __init__(self,fullname,phone_no,account_no,site,tarrif):
+        self.fullname = fullname
+        self.account_no = account_no
+        self.phone_no = phone_no
+        self.site = site
+        self.balance = 10000
+        self.tarrif = tarrif
+
+class Consumption(db.Model):
+   # __tablename__ = "consumption"
+    id = db.Column('consumption_id',db.Integer, primary_key=True)
+    date_created = db.Column(db.DateTime)
+    customer_id = db.Column(db.Integer)
+    amount = db.Column(db.Integer)
+
+    def __init__(self,customer_id,amount,date_created):
+        self.customer_id =customer_id
+        self.amount = amount
+        self.date_created = date_created
+
+
+class TopUp(db.Model):
+  #  __tablename__ = "topup"
+    id = db.Column('topup_id',db.Integer, primary_key=True)
+    date_created = db.Column(db.DateTime)
+    customer_id = db.Column(db.Integer)
+    amount = db.Column(db.Integer)
+
+    def __init__(self,customer_id,amount,date_created):
+        self.customer_id =customer_id
+        self.amount = amount
+        self.date_created = date_created
+
+
+class Complaint(db.Model):
+  #  __tablename__ = "complaint"
+    id = db.Column('complaint_id',db.Integer, primary_key=True)
+    date_created = db.Column(db.DateTime)
+    customer_id = db.Column(db.Integer)
+    description = db.Column(db.String(100))
+    category = db.Column(db.String(50))
+
+    def __init__(self,customer_id,category, description,date_created):
+        self.customer_id =customer_id
+        self.category = category
+        self.description = description
+        self.date_created = date_created
+
+
+
+class Site(db.Model):
+   # __tablename__ = "site"
+    id = db.Column('site_id',db.Integer, primary_key=True)
+    site_name = db.Column(db.String(100))
+    district = db.Column(db.String(100))
+    sector = db.Column(db.String(100))
+
+    def __init__(self,site_name,district,sector):
+        self.site_name =site_name
+        self.district = district
+        self.sector = sector
+
+
+class Application(db.Model):
+ #   __tablename__ = "application"
+    id = db.Column('application_id',db.Integer, primary_key=True)
+    fullname = db.Column(db.String(100))
+    district = db.Column(db.String(100))
+    sector = db.Column(db.String(100))
+    site = db.Column(db.String(100))
+    distance = db.Column(db.Integer)
+
+    def __init__(self,fullname,district,sector, site, distance):
+        self.fullname = fullname
+        self.district = district
+        self.sector = sector
+        self.site = site 
+        self.distance = distance
+
 
 def database_initialization():
     db.create_all()
@@ -53,6 +151,21 @@ def database_initialization():
     db.session.add(test_rec)
     db.session.rollback()
     db.session.commit()
+
+    # Adding dummy customer, site data
+
+    customer1 = Customer("Ivan","078405151","101","Kigali","3 LED")
+    customer2 = Customer("Arsene","078405151","102","Kigali","3 LED")
+    customer3 = Customer("Leandre","078405151","103","Kigali","3 LED")
+    db.session.add(customer1)
+    db.session.commit()
+    db.session.add(customer2)
+    db.session.commit()
+    db.session.add(customer3)
+    db.session.commit()
+    
+
+    
 
 
 @app.route('/', methods=['GET', 'POST'])
