@@ -14,8 +14,26 @@ from app.account_statement.account_number import findAccountNumber
 from app.account_statement.balance import findBalance
 from app.account_statement.account_history import top_up_history, consumption_history
 
-with open('language.json') as lang:
+with open('app/config/lang.json') as lang:
     language = json.load(lang)
+
+#print(type(language['en']['welcome-msg']))
+
+
+def identify_language(input_data):
+    lang_id = {}
+
+    if input_data[:4] == "1*1*":
+       lang_id = dict(num = "1", lang = "kin" )
+    elif input_data[:4] == "1*2*":
+       lang_id = dict(num = "2", lang = "en")
+ 
+    return lang_id
+
+
+
+print(identify_language("1*1*"))
+
 
 
 main = Blueprint('main', __name__)
@@ -172,7 +190,7 @@ def home():
         return "Meshpower USSD service under renovation, try again later"
 
     # IncomingText.__table__.drop(engine)
-
+    
 
     create_user_space(text, phoneNumber, sessioni, serviceCode)
 
@@ -198,23 +216,24 @@ def home():
     phone_data = user_data[0].phonenumber
     code_data = user_data[0].servicecode
     input_data = user_data[0].inputuser
-    #print("===================================================================", input_data)     
+    
+    lang_id = identify_language(input_data)
+
+    print(lang_id, " ===============================")
 #--------------------------------------- USSD Business logic -----------------------------------------
     # Welcome message in English
     if input_data == "1*":
-        userInfo = "CON Welcome to MeshPower\nPlease choose:\n1. Kinyarwanda\n2. English"
+        #userInfo = "CON Welcome to MeshPower\nPlease choose:\n1. Kinyarwanda\n2. English"
+        userInfo = 'CON '+ language['en']['welcome-msg']
 
-    # Welcome message in Kinyarwanda
-    elif input_data == "1*1*":
-        userInfo = "CON Kanda\n1. Amafranga asigaye\n2. Uko konti yakoreshejwe\n3. Kwishyura umuriro\n0. Subira inyuma \n00. Subira ahatangira"
+    # Menu
 
-    # The english menu
-    elif input_data == "1*2*":
-        userInfo = "CON Select:\n1. Account number\n2. Check Balance\n3. Top up history\n4. Consumption history\n5. Apply for service\n6. Report issues\n0. Back\n00. Back Home"       
+    elif input_data == "1*" + lang_id['num']+"*":
+        userInfo = 'CON ' + language[lang_id['lang']]['menu']
 
     # Account functionality
-    elif "1*2*1*" in input_data:
-        userInfo = findAccountNumber(input_data)
+    elif "1*" + lang_id['num'] +"*1*" in input_data:
+        userInfo = findAccountNumber(input_data, lang_id, language)
         
     # The balance functionality
     elif "1*2*2*" in input_data:
@@ -240,7 +259,10 @@ def home():
         userInfo = initiliaze_user_space(phone_data,  session_data)
 
     session.close()
+
+
     
     return userInfo
     
     #return "CON Hello world"
+
