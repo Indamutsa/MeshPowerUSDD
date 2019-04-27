@@ -14,6 +14,9 @@ from app.account_statement.account_number import findAccountNumber
 from app.account_statement.balance import findBalance
 from app.account_statement.account_history import top_up_history, consumption_history
 
+with open('language.json') as lang:
+    language = json.load(lang)
+
 
 main = Blueprint('main', __name__)
 
