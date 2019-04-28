@@ -11,7 +11,7 @@ from bottle import response
 
 from app.utils.ussd_util import create_user_space, initiliaze_user_space
 from app.account_statement.account_number import findAccountNumber 
-from app.account_statement.balance import findBalance
+from app.account_statement.balance import findBalance,  find_account_summary
 from app.account_statement.account_history import top_up_history, consumption_history
 
 with open('app/config/lang.json') as lang:
@@ -254,6 +254,9 @@ def home():
     elif "1*2*6*" in input_data:
         userInfo = reportIssues(input_data)
 
+    elif "1*2*7" in input_data:
+        userInfo =  find_account_summary(input_data)
+
     else:
         # When he clicks something different, we will take him back
         userInfo = initiliaze_user_space(phone_data,  session_data)
@@ -261,7 +264,6 @@ def home():
     session.close()
 
 
-    
     return userInfo
     
     #return "CON Hello world"

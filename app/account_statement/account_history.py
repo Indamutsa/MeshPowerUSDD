@@ -6,26 +6,7 @@ import time
 # This function return the top up history given the account number
 def top_up_history(userinput):
     # print("Account history: " + account)
-    '''
-     #Converting the user input into a string from unicode
-        userinput = str(userinput)
- 
-         if userinput == '1*2*2*':
-                 return 'CON Enter your account'
-        #elif '1*2*2*' in userinput and len(userinput) == 6:
-         elif re.match("[12*]+\*[0-9]{6}\*$", userinput):
- 
-                 # Define the regular expression that will extract the account number as input
-                regex = re.compile(r"[0-9]{6}")
- 
-                 # Here we extract an array which should have size of 1
-                 matches = re.findall(regex, userinput)
- 
- 
-                 if len(matches) == 0:
-                         return "Account number not found"
-
-    '''
+    
     #Converting the user input into a string from unicode
     userinput = str(userinput)
 

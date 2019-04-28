@@ -2,21 +2,32 @@
    "en":
    {
 	"welcome-msg":"Welcome to MeshPower\nPlease choose:\n1. Kinyarwanda\n2. English",
-	"menu":"Select:\n1. Account number\n2. Check Balance\n3. Top up history\n4. Consumption history\n5. Apply for service\n6. Report issues\n0. Back\n00. Back Home",
-   "account-phone":"Enter your phone number\n\n0. Back\n00. Back Home",
-   "phone-not-found":"Phone number not found\n\n0. Back\n00. Back Home",
-   "phone-request-failed":"Service not avalaible, try agan later"
-   
+	"menu":"Select:\n1. Account number\n2. Check Balance\n3. Top up history\n4. Consumption history\n5. Apply for service\n6. Report issues\n7. Account summary\n0. Back\n00. Back Home",
+    "account-phone":
+        { 
+           "account-phone":"Enter your phone number\n\n0. Back\n00. Back Home",
+           "phone-not-found":"Phone number not found\n\n0. Back\n00. Back Home",
+           "phone-request-failed":"Service not avalaible, try agan later",
+           "ok-account":"Account number: ",
+           "incorrect-phone":"CON Incorrect phone number, Please try again\n\n0. Back\n00. Back Home",
+           "bad-input":"Bad input,\nPlease follow instructions"
+        }
    },
 
 
    "kin":
    { 
 	"welcome-msg":"Welcome to MeshPower\nPlease choose:\n1. Kinyarwanda\n2. English",
-	"menu":"Kanda\n1. Nimero ya Konti\n2. Amafranga asigaye\n3. Ayashyizweho(frw)\n4. Ayakoreshejwe(frw)\n5. Urashaka serivisi?\n6. Menyesha ikibazo\n0. Subira inyuma \n00. Subira ahatangira",
-    "account-phone":"Shyiramo nimero ya telefoni\n\n0. Subira inyuma\n00. Subira ahatangira",
-    "phone-not-found":"Iyi nimero ntizwi\n\n0. Subira inyuma\n00. Subira inyuma",
-    "phone-request-failed":"Iyi servisi ntishoboye kuboneka, ongera mu kanya"
+	"menu":"Kanda\n1. Nimero ya Konti\n2. Amafranga asigaye\n3. Ayashyizweho(frw)\n4. Ayakoreshejwe(frw)\n5. Ushaka serivisi?\n6. Menyesha ikibazo\n7. Raporo ngufi\n0. Subira inyuma \n00. Subira ahatangira",
+    "account-phone":
+        {
+            "account-phone":"Shyiramo nimero ya telefoni\n\n0. Subira inyuma\n00. Subira ahatangira",
+            "phone-not-found":"Iyi nimero ntizwi\n\n0. Subira inyuma\n00. Subira inyuma",
+            "phone-request-failed":"Iyi servisi ntishoboye kuboneka, ongera mu kanya",
+            "ok-account":"Konti No: ",
+            "incorrect-phone":"Iyi nimero ntago tuyizi, gerageza indi",
+            "bad-input":"Ntago bugenze neza\nKurikiza amabwiriza"
+        }
     
    }
 }
