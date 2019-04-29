@@ -11,8 +11,52 @@
            "ok-account":"Account number: ",
            "incorrect-phone":"CON Incorrect phone number, Please try again\n\n0. Back\n00. Back Home",
            "bad-input":"Bad input,\nPlease follow instructions"
+        },
+    "balance":
+        {
+            "account-balance":"Enter your account number\n\n0. Back\n00. Back Home",
+            "account-not-found":"Account number not found\n\n0. Back\n00. Back Home",
+            "system-failure":"Something went wrong, try again later",
+            "balance":"Balance: ",
+            "incorrect-account": "Incorrect account number, ty again again later",
+            "bad-input":"Bad input, ty again later"
+        },
+     "summary":
+         {
+            "title":"Account summary:\n\nName: ",
+            "account-number": "\nAccount: ",
+            "balance":"\nBalance: ",
+            "tariff_name": "\nTariff name: ",
+            "remaining":"\nDays remaining: "
+         },
+    "history":
+        {
+            "no-transaction":"Zero transaction made with account: ",
+            "top-up":"Top-up: ",
+            "consumed":"Consumed: ",
+            "balance": "Balance: "
+        },
+
+    "service-application":
+        {
+            "enter-name":"Enter your name",
+            "enter-sector":"Enter your sector",
+            "enter-district":"Enter your District",
+            "name":"Name: ",
+            "sector":"Sector: ",
+            "district":"District: ",
+            "entered":"You entered: ",
+            "confirm":"\nPress\n1. confirm\n00. Go Home",
+            "thank":"Thank you for submitting, we shall get back to you asap"
+
+        },
+    "report-issue":
+        {
+            "brief-query":"Briefly, tell us your issue",
+            "account":"Account: ",
+            "issue":"Issue: "
         }
-   },
+    },
 
 
    "kin":
@@ -23,11 +67,54 @@
         {
             "account-phone":"Shyiramo nimero ya telefoni\n\n0. Subira inyuma\n00. Subira ahatangira",
             "phone-not-found":"Iyi nimero ntizwi\n\n0. Subira inyuma\n00. Subira inyuma",
-            "phone-request-failed":"Iyi servisi ntishoboye kuboneka, ongera mu kanya",
+            "phone-request-failed":"Iyi servisi ntibonetse, ongera mu kanya",
             "ok-account":"Konti No: ",
             "incorrect-phone":"Iyi nimero ntago tuyizi, gerageza indi",
-            "bad-input":"Ntago bugenze neza\nKurikiza amabwiriza"
+            "bad-input":"Ntago bigenze neza\nKurikiza amabwiriza"
+        },
+        
+    "balance":
+        {
+            "account-balance":"Shyiramo nimero ya konti\n\n0. Subira inyuma\n00. Subira ahatangira",
+            "account-not-found":"Iyi nimero ntizwi, gerageza indi",
+            "system-failure":"Iyi servisi ntibonetse, ongera mu kanya",
+            "balance":"Amafranga asigaye: ",
+            "incorrect-account": "Konti mushyizemo ntizwi, gerageza indi",
+            "bad-input":"Iyi nimero ntizwi, gerageza indi"
+        },
+    "summary":
+        { 
+            "title":"Raporo ngufi ya konti:\n\nIzina: ",
+            "account-number": "\nKonti no: ",
+            "balance":"\nAmfranga asigaye: ",
+            "tariff_name": "\nIcyiciro: ",
+            "remaining":"\nIminsi isigaye: "
+         },
+    "history":
+        {
+            "no-transaction":"Iyi konti nta gikorwa cyakozwe: ",
+            "top-up":"Ayashizweho(frw): ",
+            "consumed":"Ayakoreshejwe: ",
+            "balance": "Asigaye(frw): "
+        },
+    "service-application":
+        {
+            "enter-name":"Shyiramo amazina",
+            "enter-sector":"Shyiramo umurenge",
+            "enter-district":"SHyiramo akarere",
+            "name":"Izina: ",
+            "sector":"Umurenge: ",
+            "district":"Akarere: ",
+            "entered":"Winjije: ",
+            "confirm":"\nKanda\n1. Wemeze\n00. Subira inyuma",
+            "thank":"Murakoze kutumenyesha, turabasubiza bidatinze"
+        },
+
+    "report-issue":
+        {
+            "brief-query":"Tubwire muri make ikibazo wagize",
+            "account":"Konti no: ",
+            "issue":"Ikibazo: "
         }
-    
    }
 }

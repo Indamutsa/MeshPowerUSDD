@@ -1,11 +1,29 @@
 from sqlalchemy.orm import sessionmaker
 from app.models.model import IncomingText, engine
+from app.utils.log import log
+
 import re
+
+
+logger = log(__name__, './logs/utils.log')
+
+
+
+# Setting up the function that identify which language has been chosen
+def identify_language(input_data):
+    lang_id = {}
+
+    if  "1*1*" in input_data[:4]:
+       lang_id = dict(num = "1", lang = "kin" )
+    elif  "1*2*" in input_data[:4]:
+       lang_id = dict(num = "2", lang = "en")
+
+    return lang_id
 
 # Since havanao didn't have USSD backbone such as keeping the session in place, concatening the user input
 # and so much, we set up this function to take care of user session, concatening the user input and keep track
 # of the user where he/she might be down ussd tree
-def create_user_space(inputuser, phonenumber, sessioni, serviceCode):
+def create_user_space(inputuser, phonenumber, sessioni, serviceCode, language):
     
     # Initialize the session
     session = initialize_session()
@@ -20,8 +38,7 @@ def create_user_space(inputuser, phonenumber, sessioni, serviceCode):
     result = session.query(IncomingText).filter(IncomingText.phonenumber == phonenumber)
 
 
-    # print("########################################################################")
-    print("-----------------> ", result.count())
+    logger.debug("Number of rows of a given number : -----------------> " + str( result.count()))
 
     #-----------------------------------------------------------------------------------------------------------------
     # If the user is not in the database, we make sure we add the user according to his phone number
@@ -40,7 +57,7 @@ def create_user_space(inputuser, phonenumber, sessioni, serviceCode):
             return
 
         except:
-            print("======== || ====>>  Number already exists")
+            logger.debug("======== || ====>>  Number already exists" + str(phonenumber))
     #----------------------------------------------------------------------------------------------------------------
     # This time the user details should be in the database
     result = session.query(IncomingText).filter(IncomingText.phonenumber == phonenumber)
@@ -52,30 +69,33 @@ def create_user_space(inputuser, phonenumber, sessioni, serviceCode):
     # If the session is different, we also make sure we reinitialize the inputuser and session because
     # He will start from the top of the tree
     print("===================================================================", type(inputuser), session_db)
+    
+    lang_id = identify_language(inputuser_db)
+    print(lang_id, inputuser_db, "/////////////////////////////////////")
 
     if session_db != sessioni:
-        print("It is different==========================")
-        initiliaze_user_space(phonenumber, sessioni)
+        logger.debug("Session is different, we shall go ahead and reinitialize user space ===================")
+        initiliaze_user_space(phonenumber, sessioni, language)
 
     #----------------------------------------------------------------------------------------------------------------
-    
+   
+    #lang_id = identify_language(inputuser_db)
+
     # If the session is the same as we have in the db, the user can go on and continue down the tree
     elif session_db == sessioni and inputuser != '0' and inputuser != '00' :
-        if "1*2*5*" in inputuser_db or "1*2*6" in inputuser_db: 
-            concatenateInput(inputuser, inputuser_db, phonenumber)
-        
+        print(bool(lang_id), inputuser_db, "+++++++++++++++++++++++++++++++++++++++++")
+        # We first make sure the dict is loaded
+        if bool(lang_id) == True: 
+            
+            if "1*" + lang_id['num'] + "*5*" in inputuser_db or "1*" + lang_id['num'] + "*6" in inputuser_db: 
+                print(lang_id['num'], "$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+                concatenateInput(inputuser, inputuser_db, phonenumber)
+
+            elif re.match(r'[0-9]', inputuser):
+                concatenateInput(inputuser, inputuser_db, phonenumber)
+
         elif re.match(r'[0-9]', inputuser):
             concatenateInput(inputuser, inputuser_db, phonenumber)
-
-
-        '''
-        inputuser_db = inputuser_db + inputuser + "*"
-        
-        # Update it to the database and commit it
-        session.query(IncomingText).filter(IncomingText.phonenumber == phonenumber)\
-            .update({ IncomingText.inputuser: inputuser_db }, synchronize_session = False)
-        session.commit()
-        '''
 
     #---------------------------------- Going back once -------------------------------------------------------------
 
@@ -98,9 +118,9 @@ def create_user_space(inputuser, phonenumber, sessioni, serviceCode):
     #                     REUSABLE FUNCTIONS                                                  #
     ###########################################################################################
 
-def initiliaze_user_space(phonenumber, sessioni):
+def initiliaze_user_space(phonenumber, sessioni, language):
     
-    userInfo = "CON Welcome to MeshPower\nPlease choose:\n1. Kinyarwanda\n2. English"
+    userInfo = 'CON '+ language['en']['welcome-msg']
 
     # Initialize the session
     session = initialize_session()
@@ -110,16 +130,22 @@ def initiliaze_user_space(phonenumber, sessioni):
     session_db = sessioni
     
     print("=============||=========================", session_db)
+    
+    try:
+        # Update the very row we changed to the database and commit it
+        session.query(IncomingText).filter(IncomingText.phonenumber == phonenumber)\
+            .update({IncomingText.inputuser: inputuser_db, IncomingText.session_id: session_db}, synchronize_session = False)
+    except Exception as e:
+        logger.debug(e)
+    else:
+        # We will commit if no exception is thrown
+        session.commit()
 
-    # Update the very row we changed to the database and commit it
-    session.query(IncomingText).filter(IncomingText.phonenumber == phonenumber)\
-        .update({IncomingText.inputuser: inputuser_db, IncomingText.session_id: session_db}, synchronize_session = False)
-    session.commit()
-
-    result = session.query(IncomingText).filter(IncomingText.phonenumber == phonenumber)
-    print(result[0].session_id, result[0].inputuser, "-------||-------------------||-------------")
-
-    session.close()
+        result = session.query(IncomingText).filter(IncomingText.phonenumber == phonenumber)
+        print(result[0].session_id, result[0].inputuser, "-------||-------------------||-------------")
+        session.close()
+    finally:
+        logger.debug("Inside reinitialized" + str(phonenumber))
 
     return userInfo
 
@@ -130,12 +156,19 @@ def goBackToRoot(phonenumber):
     
     inputuser_db = "1*"
 
-    # Update it to the database and commit it
-    session.query(IncomingText).filter(IncomingText.phonenumber == phonenumber)\
-        .update({ IncomingText.inputuser: inputuser_db }, synchronize_session = False)
-    session.commit()
+    try:
+        # Update it to the database and commit it
+        session.query(IncomingText).filter(IncomingText.phonenumber == phonenumber)\
+            .update({ IncomingText.inputuser: inputuser_db }, synchronize_session = False)
+    
+    except Exception as e:
+        logger.debug(e)
+    else:
+        session.commit()
 
-    session.close()
+        session.close()
+    finally:
+        logger.debug("Inside goback to root" + str(phonenumber))
 
 def goBackOnce(inputuser_db, phonenumber):
     
@@ -148,12 +181,21 @@ def goBackOnce(inputuser_db, phonenumber):
     else:
         inputuser_db = "1*"
 
-    # Update it to the database and commit it
-    session.query(IncomingText).filter(IncomingText.phonenumber == phonenumber)\
-        .update({ IncomingText.inputuser: inputuser_db }, synchronize_session = False)
-    session.commit()
+    try:
+        # Update it to the database and commit it
+        session.query(IncomingText).filter(IncomingText.phonenumber == phonenumber)\
+            .update({ IncomingText.inputuser: inputuser_db }, synchronize_session = False)
+    except Exception as e:
+        logger.debug(e)
 
-    session.close()
+    else:
+
+        session.commit()
+
+        session.close()
+    finally:
+       logger.debug("Inside goback once" +  + str(phonenumber))
+
 
 def concatenateInput(inputuser, inputuser_db, phonenumber):
 
@@ -161,14 +203,19 @@ def concatenateInput(inputuser, inputuser_db, phonenumber):
     session =  initialize_session()
 
     input_db = inputuser_db + inputuser + "*"
+    try:
+        # Update it to the database and commit it
+        session.query(IncomingText).filter(IncomingText.phonenumber == phonenumber)\
+           .update({ IncomingText.inputuser: input_db }, synchronize_session = False)
+    except Exception as e:
+        logger.debug(e)
+    else:
+    
+        session.commit()
 
-    # Update it to the database and commit it
-    session.query(IncomingText).filter(IncomingText.phonenumber == phonenumber)\
-       .update({ IncomingText.inputuser: input_db }, synchronize_session = False)
-    session.commit()
-
-    session.close()
-
+        session.close()
+    finally:
+        logger.debug('inside concatenate function' + str(phonenumber))
 
 def initialize_session():
 
@@ -176,4 +223,5 @@ def initialize_session():
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    return session    
+    return session   
+

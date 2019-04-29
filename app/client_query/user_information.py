@@ -1,36 +1,42 @@
 from app.utils.ussd_util import  initiliaze_user_space
 import re, requests
 
-def applyForService(inputdata):
+def applyForService(inputdata, lang_id, language):
+    
     num = countStar(inputdata)
-
-    district = ["Bugesera"]
-
+    print(inputdata)
     if num == 3:
-        return "CON Enter your name"
+        return 'CON ' + language[lang_id['lang']]['service-application']['enter-name']
+    
     elif num == 4:
-        return "CON Enter your sector"
+        return  'CON ' + language[lang_id['lang']]['service-application']['enter-sector']
+    
     elif num == 5:
-        return "CON Enter your District"
+        return  'CON ' + language[lang_id['lang']]['service-application']['enter-district']
+    
     elif num == 6:
+    
         userInfo = ""
         hello = inputdata[6:].split("*")
-        hellow = ["Name: ", "Sector: ", "District: "]
+
+        hellow = [language[lang_id['lang']]['service-application']['name'], language[lang_id['lang']]['service-application']['sector'], language[lang_id['lang']]['service-application']['district']]
         
         for h, p in zip(hello, hellow):
             print(p, h)
             userInfo += p + "" + h + "\n"
 
-        return "CON " + "You entered: \n\n" + userInfo + "\nPress\n1. confirm\n00. Go Home"
+        return "CON " + language[lang_id['lang']]['service-application']['entered'] + "\n\n" + userInfo + language[lang_id['lang']]['service-application']['confirm']
+    
     elif '1' in inputdata[:2] and num == 7:
-        return "Thank you for submitting, we shall get back to you asap"
+        return language[lang_id['lang']]['service-application']['thank']
 
-def reportIssues(inputdata):
+def reportIssues(inputdata, lang_id, language):
     
     num = countStar(inputdata)
-    
-    if inputdata == '1*2*6*':
-        return 'CON Enter your account\n\n0. Back\n00. Back Home'
+
+    if inputdata == '1*' + lang_id['num'] + '*6*':
+   
+        return 'CON ' + language[lang_id['lang']]['balance']['account-balance']  
 
     elif re.match("[126*]+\*[0-9]{6}\*$", inputdata):
         # Define the regular expression that will extract the account number as input
@@ -40,38 +46,41 @@ def reportIssues(inputdata):
         matches = re.findall(regex, inputdata)
      
         if len(matches) == 0:
-            return "CON Account number not found\n\n0. Back\n00. Back Home"
+            return "CON " + language[lang_id['lang']]['balance']['account-not-found'] 
         
         # Getting the url that will be passed in to get the associated account
         url = 'http://csu.meshpower.co.rw:6001/accounts/api-account/v3/' + matches[0]
         header = {'X-Authorization': 'Szr7Zdd03aaEkz13XNOdn02vR7j35vvL'}
- 
-        # Retrieving data from the url 
-        r = requests.get(url, headers=header)
-        
-        #If response is defined
-        if r.status_code == 200:
-            return "CON Briefly, tell us your issue"
-        
+
+        try:
+            # Retrieving data from the url 
+            r = requests.get(url, headers=header)
+             
+            #If response is defined
+            if r.status_code == 200:
+
+                print("************************#######`************************************************", r.status_code)    
+                return "CON " + language[lang_id['lang']]['report-issue']['brief-query'] 
+        except Exception as e:
+            print(e)
+            return language[lang_id['lang']]['balance']['system-failure'] 
+
     elif re.match("[126*]+\*[0-9]{6}\*[\w]+\*$", inputdata) and num == 5:
 
         print (num , "======================================================================")
-        #elif num == 4:
-        print("sdfssssssssssssssssssssssss")
+        
         userInfo = ""
         
         hello = inputdata[6:].split("*")
-        hellow = ["account: ", "Issue: "]
-        
+        hellow = [language[lang_id['lang']]['report-issue']['account'] , language[lang_id['lang']]['report-issue']['issue'] ]
         
         for h, p in zip(hello, hellow):
-            print(p, h)
             userInfo += p + "" + h + "\n"
         
-        return "CON " + "You entered: \n\n" + userInfo + "\nPress\n1. confirm\n00. Go Home"
-    elif '1' in inputdata[:2] and num == 6:
-        return "Thank you for submitting, we shall get back to asap"
+        return "CON " + language[lang_id['lang']]['service-application']['entered'] + "\n\n" + userInfo + language[lang_id['lang']]['service-application']['confirm'] 
 
+    elif '1' in inputdata[:2] and num == 6:
+        return language[lang_id['lang']]['service-application']['thank'] 
 
 def countStar(word):
     character = '*'
