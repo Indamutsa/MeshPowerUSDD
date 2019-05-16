@@ -58,20 +58,16 @@ class ServiceApplication(Base):
 
     # Defining our columns in this table
     id = Column('text_id', Integer, primary_key=True)
-    village = Column(String, nullable=False)
-    cell = Column(String, nullable=False)
     sector = Column(String, nullable=False)
     district = Column(String, nullable=False)
-    province = Column(String, nullable=False)
+    name = Column(String, nullable=False)
     phonenumber = Column(String, nullable=False)
 
-    # Defining our constructor
-    def __init__(self, village, cell, sector, district, province, phonenumber):
-        self.village = village
-        self.cell = cell
+    # Defining our constructor def __init__(self, village, cell, sector, district, province, phonenumber):
+    def __init__(self, sector, district, name, phonenumber):
         self.sector = sector
         self.district = district
-        self.province = province
+        self.name = name
         self.phonenumber = phonenumber
 
 class IssueReport(Base):
@@ -81,21 +77,13 @@ class IssueReport(Base):
 
     #Defining our columns in this table
     id = Column('text_id', Integer, primary_key=True)
-    village = Column(String(30), nullable=False)
-    cell = Column(String(30), nullable=False)
-    sector = Column(String(30), nullable=False)
-    district = Column(String(30), nullable=False)
-    province = Column(String(30), nullable=False)
+    account = Column(String(30), nullable=False)
     phonenumber = Column(String(30), nullable=False)
     issue = Column(String, nullable=False)
 
     # Defining our constructor
-    def __init__(self, village, cell, sector, district, province, phonenumber, issue):
-        self.village = village
-        self.cell = cell
-        self.sector = sector
-        self.district = district
-        self.province = province
+    def __init__(self, account, phonenumber, issue):
+        self.account = account
         self.phonenumber = phonenumber
         self.issue = issue
 

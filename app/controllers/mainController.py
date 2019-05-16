@@ -15,7 +15,7 @@ from bottle import response
 from app.utils.ussd_util import create_user_space, initiliaze_user_space, identify_language
 from app.utils.log import log
 from app.account_statement.account_number import findAccountNumber 
-from app.account_statement.balance import findBalance,  find_account_summary
+from app.account_statement.account_statement import findBalance,  find_account_summary
 from app.account_statement.account_history import top_up_history, consumption_history
 
 
@@ -24,37 +24,7 @@ with open('app/config/lang.json') as lang:
     language = json.load(lang)
 
 # ---------------------------- Setting u the logger ----------------------
-
 logger = log(__name__, './logs/main_controller.log')
-'''
-current_module = __name__
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-
-formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(name)s:%(message)s')
-
-file_handler = logging.FileHandler('applogs.log')
-stream_handler = logging.StreamHandler()
-
-file_handler.setLevel(logging.DEBUG)
-file_handler.setFormatter(formatter)
-stream_handler.setFormatter(formatter)
-
-logger.addHandler(file_handler)
-logger.addHandler(stream_handler)
-'''
-'''
-# Setting up the function that identify which language has been chosen
-def identify_language(input_data):
-    lang_id = {}
-
-    if input_data[:4] == "1*1*":
-       lang_id = dict(num = "1", lang = "kin" )
-    elif input_data[:4] == "1*2*":
-       lang_id = dict(num = "2", lang = "en")
- 
-    return lang_id
-'''
 
 
 main = Blueprint('main', __name__)
@@ -208,14 +178,16 @@ def home():
     '''
     # If the incoming payload lacks one of the below arguments, Talk to havanao to fix incoming parameters on their end
     if sessioni is None or phoneNumber is None or text is None:
-        logger.debug("Query missed parameters", "Session: ",sessioni,"Phone: ", phoneNumber,"User input: ", text)
+        logger.debug("Query missed parameters" +  "Session: " + sessioni + " Phone: " + phoneNumber + " User input: " + text)
         return "Meshpower USSD service under renovation, try again later"
 
     # IncomingText.__table__.drop(engine)
-    
-
-    create_user_space(text, phoneNumber, sessioni, serviceCode, language)
-
+    try:
+        create_user_space(text, phoneNumber, sessioni, serviceCode, language)
+    except Exception as e:
+        logger.debug(e)
+    else:
+        logger.debug("USSD request passed")
     # -------------------------------------------------- ## TODO CLEAN up ---------------------------------------------------
     # Defining the variable that will return data from database 
     # user_data = session.query(IncomingText).all()
@@ -240,50 +212,53 @@ def home():
     input_data = user_data[0].inputuser
     
     lang_id = identify_language(input_data)
-
+    print(lang_id, "###################$$$$$$$$$$$$$$$$$$$$$$")
 #--------------------------------------- USSD Business logic -----------------------------------------
-    # Welcome message in English
-    if input_data == "1*":
-        userInfo = 'CON '+ language['en']['welcome-msg']
 
-    # Menu
-    elif input_data == "1*" + lang_id['num']+"*":
-        userInfo = 'CON ' + language[lang_id['lang']]['menu']
+    try:
+        # Welcome message in English
+        if input_data == "1*":
+            userInfo = 'CON '+ language['en']['welcome-msg']
 
-    # Account functionality
-    elif "1*" + lang_id['num'] +"*1*" in input_data:
-        userInfo = findAccountNumber(input_data, lang_id, language)
+        # Menu
+        elif input_data == "1*" + lang_id['num']+"*":
+            userInfo = 'CON ' + language[lang_id['lang']]['menu']
+
+        # Account functionality
+        elif "1*" + lang_id['num'] +"*1*" in input_data:
+            userInfo = findAccountNumber(input_data, lang_id, language)
+            
+        # The balance functionality
+        elif "1*" + lang_id['num'] + "*2*" in input_data:
+            userInfo = findBalance(input_data, lang_id, language)
         
-    # The balance functionality
-    elif "1*" + lang_id['num'] + "*2*" in input_data:
-        userInfo = findBalance(input_data, lang_id, language)
+        # The top up functionality
+        elif "1*" + lang_id['num'] + "*3*" in input_data:
+            userInfo = top_up_history(input_data, lang_id, language)
+
+
+        elif "1*" + lang_id['num'] + "*4*" in input_data:
+            userInfo = consumption_history(input_data, lang_id, language)
+
+        elif '1*' + lang_id['num'] + '*5*' in input_data:
+            userInfo = applyForService(input_data, lang_id, language)
+
+
+        elif "1*" + lang_id['num'] + "*6*" in input_data:
+            userInfo = reportIssues(input_data, lang_id, language)
+
+        elif "1*" + lang_id['num'] + "*7" in input_data:
+            userInfo =  find_account_summary(input_data, lang_id, language)
+
+        else:
+            # When he clicks something different, we will take him back
+            userInfo = initiliaze_user_space(phone_data,  session_data, language)
+
+
+        session.close()
+        
+        return userInfo
     
-    # The top up functionality
-    elif "1*" + lang_id['num'] + "*3*" in input_data:
-        userInfo = top_up_history(input_data, lang_id, language)
-
-
-    elif "1*" + lang_id['num'] + "*4*" in input_data:
-        userInfo = consumption_history(input_data, lang_id, language)
-
-    elif '1*' + lang_id['num'] + '*5*' in input_data:
-        userInfo = applyForService(input_data, lang_id, language)
-
-
-    elif "1*" + lang_id['num'] + "*6*" in input_data:
-        userInfo = reportIssues(input_data, lang_id, language)
-
-    elif "1*" + lang_id['num'] + "*7" in input_data:
-        userInfo =  find_account_summary(input_data, lang_id, language)
-
-    else:
-        # When he clicks something different, we will take him back
+    except:
         userInfo = initiliaze_user_space(phone_data,  session_data, language)
-
-    session.close()
-
-    
-    return userInfo
-    
-    #return "CON Hello world"
-
+        return userInfo

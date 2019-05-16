@@ -57,7 +57,7 @@ def create_user_space(inputuser, phonenumber, sessioni, serviceCode, language):
             return
 
         except:
-            logger.debug("======== || ====>>  Number already exists" + str(phonenumber))
+            logger.debug("======== || ====>>  Number already exists " + str(phonenumber))
     #----------------------------------------------------------------------------------------------------------------
     # This time the user details should be in the database
     result = session.query(IncomingText).filter(IncomingText.phonenumber == phonenumber)
@@ -84,11 +84,11 @@ def create_user_space(inputuser, phonenumber, sessioni, serviceCode, language):
     # If the session is the same as we have in the db, the user can go on and continue down the tree
     elif session_db == sessioni and inputuser != '0' and inputuser != '00' :
         print(bool(lang_id), inputuser_db, "+++++++++++++++++++++++++++++++++++++++++")
+        
         # We first make sure the dict is loaded
         if bool(lang_id) == True: 
             
             if "1*" + lang_id['num'] + "*5*" in inputuser_db or "1*" + lang_id['num'] + "*6" in inputuser_db: 
-                print(lang_id['num'], "$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
                 concatenateInput(inputuser, inputuser_db, phonenumber)
 
             elif re.match(r'[0-9]', inputuser):
@@ -177,7 +177,9 @@ def goBackOnce(inputuser_db, phonenumber):
 
     # We would like to make sure when we reaches the root, we stop
     if len(inputuser_db) > 2:
-        inputuser_db = inputuser_db[:-2]
+        inputuser_db = re.sub('\*[\w \d]+\*$', '', inputuser_db ) + "*"
+
+        print(inputuser_db, "*************************************")
     else:
         inputuser_db = "1*"
 
@@ -194,7 +196,7 @@ def goBackOnce(inputuser_db, phonenumber):
 
         session.close()
     finally:
-       logger.debug("Inside goback once" +  + str(phonenumber))
+       logger.debug("Inside goback once" + str(phonenumber))
 
 
 def concatenateInput(inputuser, inputuser_db, phonenumber):

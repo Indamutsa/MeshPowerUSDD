@@ -4,7 +4,8 @@ import re, requests
 def applyForService(inputdata, lang_id, language):
     
     num = countStar(inputdata)
-    print(inputdata)
+    #print(inputdata)
+    
     if num == 3:
         return 'CON ' + language[lang_id['lang']]['service-application']['enter-name']
     
@@ -29,6 +30,9 @@ def applyForService(inputdata, lang_id, language):
     
     elif '1' in inputdata[:2] and num == 7:
         return language[lang_id['lang']]['service-application']['thank']
+    
+    else:
+        language[lang_id['lang']]['account-phone']['bad-input']
 
 def reportIssues(inputdata, lang_id, language):
     
@@ -44,7 +48,7 @@ def reportIssues(inputdata, lang_id, language):
       
         # Here we extract an array which should have size of 1
         matches = re.findall(regex, inputdata)
-     
+
         if len(matches) == 0:
             return "CON " + language[lang_id['lang']]['balance']['account-not-found'] 
         
@@ -59,15 +63,16 @@ def reportIssues(inputdata, lang_id, language):
             #If response is defined
             if r.status_code == 200:
 
-                print("************************#######`************************************************", r.status_code)    
-                return "CON " + language[lang_id['lang']]['report-issue']['brief-query'] 
+                #print("************************#######`************************************************", r.status_code)    
+                return "CON " + language[lang_id['lang']]['report-issue']['brief-query']
+            
         except Exception as e:
             print(e)
-            return language[lang_id['lang']]['balance']['system-failure'] 
+            return 'CON ' + language[lang_id['lang']]['balance']['system-failure'] 
 
     elif re.match("[126*]+\*[0-9]{6}\*[\w]+\*$", inputdata) and num == 5:
 
-        print (num , "======================================================================")
+        #print (num , "======================================================================")
         
         userInfo = ""
         
@@ -81,6 +86,9 @@ def reportIssues(inputdata, lang_id, language):
 
     elif '1' in inputdata[:2] and num == 6:
         return language[lang_id['lang']]['service-application']['thank'] 
+
+    else:
+        return language[lang_id['lang']]['balance']['account-not-found']
 
 def countStar(word):
     character = '*'

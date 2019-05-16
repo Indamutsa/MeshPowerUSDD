@@ -1,11 +1,16 @@
 import requests, re, json
-import time 
+import time, logging
+
+from app.utils.log import log
+
+# Setting up the logger
+logger = log(__name__, './logs/account_history.log')
 
 # In this file we will return account top up and consumption history
 
 # This function return the top up history given the account number
 def top_up_history(userinput, lang_id, language):
-    # print("Account history: " + account)
+    #logger.debug("Inside Account history functionality: " + account)
     
     #Converting the user input into a string from unicode
     userinput = str(userinput)
@@ -22,7 +27,7 @@ def top_up_history(userinput, lang_id, language):
         matches = re.findall(regex, userinput)
 
         if len(matches) == 0:
-            return "CON " + language[lang_id['lang']]['balance']['account-not-phone']
+            return "CON " + language[lang_id['lang']]['balance']['account-not-found']
 
         # Declaring the url that will retrieve data of a given account
         url = 'http://csu.meshpower.co.rw:6001/accounts/api-top-up/v3/' + matches[0]
@@ -41,10 +46,12 @@ def top_up_history(userinput, lang_id, language):
             top_up = r.json()
 
         except:
+            #logger.debug(language[lang_id['lang']]['balance']['system-failure'])
             return language[lang_id['lang']]['balance']['system-failure']
 
         # Make sure the retrieved account are not empty
         if len(top_up) == 0:
+            logger.debug(language[lang_id['lang']]['history']['no-transaction'] + matches[0])
             return language[lang_id['lang']]['history']['no-transaction'] + matches[0]
 
         i = 0
@@ -62,7 +69,7 @@ def top_up_history(userinput, lang_id, language):
             
             # Retrieving the time and topup amount
             currency = str(data['currency']) 
-            print(type(currency))
+            #print(type(currency))
 
             if currency == 'nan':
                 currency = "frw"
@@ -73,7 +80,8 @@ def top_up_history(userinput, lang_id, language):
 
             # Contenated string that we return
             user_info = user_info + topup_time + "\n" +topup_amount + "\n"
-        
+            #logger.debug("Top up request passed: " + str(matches[0]))
+
     return user_info
 
 
@@ -130,7 +138,7 @@ def consumption_history(userinput, lang_id, language):
             
             # Retrieving the time and topup amount
             currency = str(data['currency']) 
-            print(type(currency))
+            #print(type(currency))
 
             if currency == 'nan':
                 currency = "frw"

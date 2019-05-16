@@ -8,7 +8,7 @@ def findAccountNumber(userinput, lang_id, language):
     #Converting the user input into a string from unicode
     userinput = str(userinput)
 
-    print(lang_id, language)
+    #print(lang_id, language)
 
     # As the user to enter the phone number
     if userinput == "1*" + lang_id['num'] +"*1*":
